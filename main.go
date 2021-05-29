@@ -12,8 +12,13 @@ func main() {
 	ctx := context.Background()
 	token := os.Getenv("bot")
 	domain := os.Getenv("domain")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "7777"
+	}
+	addr := "0.0.0.0:" + port
 
-	srv := server.New("localhost:7777")
+	srv := server.New(addr)
 	path := domain + srv.GetEndpointForBot("1")
 	bot, err := telegram.AddNewBot(token)
 	if err != nil {

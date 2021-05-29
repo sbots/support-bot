@@ -20,7 +20,7 @@ func AddNewBot(token string) (*Bot, error) {
 
 func (b Bot) SetNewWebhook(path string) error {
 	u, err := url.Parse(path)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 	_, err = b.client.SetWebhook(tg.WebhookConfig{
