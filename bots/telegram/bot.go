@@ -6,24 +6,16 @@ import (
 	"net/url"
 )
 
-type Bot struct {
-	client *tg.BotAPI
-}
-
-func AddNewBot(token string) (*Bot, error) {
+func ConnectNewBot(token, path string) error {
 	bot, err := tg.NewBotAPI(token)
 	if err != nil {
-		return nil, fmt.Errorf("adding new bot, %w", err)
+		return fmt.Errorf("adding new bot, %w", err)
 	}
-	return &Bot{bot}, nil
-}
-
-func (b Bot) SetNewWebhook(path string) error {
 	u, err := url.Parse(path)
 	if err != nil {
 		return err
 	}
-	_, err = b.client.SetWebhook(tg.WebhookConfig{
+	_, err = bot.SetWebhook(tg.WebhookConfig{
 		URL:            u,
 		Certificate:    nil,
 		MaxConnections: 1,

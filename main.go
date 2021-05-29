@@ -3,28 +3,24 @@ package main
 import (
 	"context"
 	"log"
-	"os"
 	"support-bot/bots/telegram"
+	"support-bot/config"
 	"support-bot/server"
 )
 
+const testBotID = "1"
+
 func main() {
 	ctx := context.Background()
-	token := os.Getenv("bot")
-	domain := os.Getenv("domain")
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "7777"
-	}
-	addr := "0.0.0.0:" + port
 
-	srv := server.New(addr)
-	path := domain + srv.GetEndpointForBot("1")
-	bot, err := telegram.AddNewBot(token)
+	cfg, err := config.FromOS()
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := bot.SetNewWebhook(path); err != nil {
+	srv := server.New(cfg.GetAddr())
+
+	path := cfg.Domain + srv.GetEndpointForBot(testBotID)
+	if err := telegram.ConnectNewBot(cfg.TestToken, path); err != nil {
 		log.Fatal(err)
 	}
 
