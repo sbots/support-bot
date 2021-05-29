@@ -9,12 +9,16 @@ import (
 )
 
 type Server struct {
-	http *http.Server
+	http             *http.Server
+	telegramEndpoint string
 }
+
+const telegramEndpoint = "/bots/telegram/"
 
 func New(addr string) *Server {
 	s := &Server{
-		http: &http.Server{Addr: addr},
+		http:             &http.Server{Addr: addr},
+		telegramEndpoint: telegramEndpoint,
 	}
 	s.http.Handler = s.router()
 	return s
@@ -32,9 +36,10 @@ func (s Server) Run(ctx context.Context) error {
 	return s.http.ListenAndServe()
 }
 
-func (s *Server) router() *mux.Router{
+func (s *Server) router() *mux.Router {
 	router := mux.NewRouter()
-	router.HandleFunc("/bots/telegram/{bot}", s.handler)
+	tgPath := s.telegramEndpoint + "{bot}"
+	router.HandleFunc(tgPath, s.handler)
 	return router
 }
 
@@ -43,6 +48,10 @@ func (s *Server) handler(w http.ResponseWriter, r *http.Request) {
 	if _, err := fmt.Fprintf(w, bot); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (s *Server) GetEndpointForBot(id string) string {
+	return s.telegramEndpoint + id
 }
 
 func getBot(r *http.Request) string {

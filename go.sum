@@ -1,2 +1,8 @@
+github.com/PatrickKvartsaniy/telegram-bot-api v4.6.4+incompatible h1:xA4qgQgeKlrKNoZOYyhsxhIpU65vTO7Ob8JLgZxrLpM=
+github.com/PatrickKvartsaniy/telegram-bot-api v4.6.4+incompatible/go.mod h1:vzqlZjKBvZ2vIy0Fwo/8inVK3lckb/FYNrd4lS4qXtE=
+github.com/go-telegram-bot-api/telegram-bot-api v5.0.1+incompatible h1:UISsei51FubhhYLraH5o4Z3gvUZ6GeXqijCCrI1v0h8=
+github.com/go-telegram-bot-api/telegram-bot-api v5.0.1+incompatible/go.mod h1:lDm2E64X4OjFdBUA4hlN4mEvbSitvhJdKw7rsA8KHgI=
 github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
 github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
+github.com/technoweenie/multipartstreamer v1.0.1 h1:XRztA5MXiR1TIRHxH2uNxXxaIkKQDeX7m2XsSOlQEnM=
+github.com/technoweenie/multipartstreamer v1.0.1/go.mod h1:jNVxdtShOxzAsukZwTSw6MDx5eUJoiEBsSvzDU9uzog=
