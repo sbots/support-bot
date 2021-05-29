@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -45,9 +44,7 @@ func (s *Server) router() *mux.Router {
 
 func (s *Server) handler(w http.ResponseWriter, r *http.Request) {
 	bot := getBot(r)
-	if _, err := fmt.Fprintf(w, bot); err != nil {
-		log.Fatal(err)
-	}
+	log.Println(bot)
 }
 
 func (s *Server) GetEndpointForBot(id string) string {
