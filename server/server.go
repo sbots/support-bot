@@ -56,22 +56,7 @@ func (s *Server) telegramHandler(_ http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	log.Println(update)
-}
-
-func (s *Server) handleUpdate(r *http.Request) (*models.Update, error) {
-	if r.Method != http.MethodPost {
-		err := errors.New("wrong HTTP method required POST")
-		return nil, err
-	}
-
-	var update models.Update
-	err := json.NewDecoder(r.Body).Decode(&update)
-	if err != nil {
-		return nil, err
-	}
-
-	return &update, nil
+	log.Println(update.Message.Text)
 }
 
 func (s *Server) GetEndpointForBot(id string) string {
