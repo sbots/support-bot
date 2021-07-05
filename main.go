@@ -17,12 +17,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	srv := server.New(cfg.GetAddr())
-
-	path := cfg.Domain + srv.GetEndpointForBot(testBotID)
-	if err := telegram.ConnectNewBot(cfg.TestToken, path); err != nil {
-		log.Fatal(err)
-	}
+	srv := server.New(cfg.GetAddr(), cfg.Domain, telegram.NewClient(), repo)
 
 	if err := srv.Run(ctx); err != nil {
 		log.Fatal(err)
