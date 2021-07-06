@@ -3,7 +3,6 @@ package server
 import (
 	"encoding/json"
 	"github.com/gorilla/mux"
-	uuid "github.com/satori/go.uuid"
 	"log"
 	"net/http"
 	"support-bot/models"
@@ -11,7 +10,7 @@ import (
 
 func (s *Server) telegramHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "POST requests only allowed", http.StatusInternalServerError)
+		http.Error(w, "POST requests only allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -26,12 +25,21 @@ func (s *Server) telegramHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "POST requests only allowed", http.StatusInternalServerError)
+		http.Error(w, "POST requests only allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	bot := models.NewBot(uuid.NewV4().String(), mux.Vars(r)["token"])
-	if _, err := s.repo.CreateBot(bot); err != nil {
+	var bot models.Bot
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+
+	if err := decoder.Decode(&bot); err != nil{
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	bot.SetUUID()
+	if _, err := s.repo.CreateBot(&bot); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
@@ -55,7 +63,7 @@ func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
 
 func (s Server) send(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "POST requests only allowed", http.StatusInternalServerError)
+		http.Error(w, "POST requests only allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
