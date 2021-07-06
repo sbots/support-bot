@@ -28,7 +28,7 @@ type telegram interface {
 const (
 	telegramEndpoint       = "/bots/telegram/"
 	telegramNewBotEndpoint = telegramEndpoint + "new/"
-	telegramSendMessage    = "send/"
+	telegramSendMessage    = telegramEndpoint + "send/"
 )
 
 func New(addr, domain string, tg telegram, r repo) *Server {
@@ -60,7 +60,7 @@ func (s *Server) router() *mux.Router {
 
 	router.HandleFunc(telegramEndpoint+"{bot}", s.telegramHandler)
 	router.HandleFunc(telegramNewBotEndpoint, s.newBot)
-	router.HandleFunc(telegramSendMessage+"{bot}", s.telegramHandler)
+	router.HandleFunc(telegramSendMessage+"{bot}", s.send)
 
 	return router
 }
