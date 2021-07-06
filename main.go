@@ -5,6 +5,7 @@ import (
 	"log"
 	"support-bot/bots/telegram"
 	"support-bot/config"
+	"support-bot/persistence"
 	"support-bot/server"
 )
 
@@ -14,6 +15,11 @@ func main() {
 	ctx := context.Background()
 
 	cfg, err := config.FromOS()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	repo, err := persistence.NewRepository()
 	if err != nil {
 		log.Fatal(err)
 	}
