@@ -78,7 +78,7 @@ func (s Server) send(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := s.tg.SendMessage(&msg, mux.Vars(r)["token"]); err != nil {
+	if err := s.tg.SendMessage(&msg, mux.Vars(r)["bot"]); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
