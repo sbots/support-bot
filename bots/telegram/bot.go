@@ -27,7 +27,7 @@ func (c Client) SendMessage(msg *models.Message, token string) error {
 	resp, err := bot.Send(m)
 	fmt.Println(resp)
 	if err != nil {
-		return errors.New("sending message")
+		return fmt.Errorf("sending message %w", err)
 	}
 	return nil
 }
