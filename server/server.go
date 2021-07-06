@@ -59,7 +59,7 @@ func (s *Server) router() *mux.Router {
 	router := mux.NewRouter()
 
 	router.HandleFunc(telegramEndpoint+"{bot}", s.telegramHandler)
-	router.HandleFunc(telegramNewBotEndpoint+"{bot}", s.newBot)
+	router.HandleFunc(telegramNewBotEndpoint, s.newBot)
 	router.HandleFunc(telegramSendMessage, s.telegramHandler)
 
 	return router
