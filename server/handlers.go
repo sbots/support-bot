@@ -33,7 +33,7 @@ func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	defer r.Body.Close()
 
-	if err := decoder.Decode(&bot); err != nil{
+	if err := decoder.Decode(&bot); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

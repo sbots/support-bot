@@ -7,7 +7,7 @@ type Bot struct {
 	Token string `json:"token" gorm:"token"`
 }
 
-func (b *Bot) SetUUID(){
+func (b *Bot) SetUUID() {
 	b.ID = uuid.NewV4().String()
 }
 
