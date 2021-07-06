@@ -20,7 +20,7 @@ func (s *Server) telegramHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	log.Println(update.Message.Text)
+	log.Println(update.Message.Chat, update.Message.Text)
 }
 
 func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
