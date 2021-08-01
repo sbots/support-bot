@@ -46,17 +46,15 @@ func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	id := uuid.NewV4().String()
-
 	bot := models.NewBot(id, data.Token, data.Type)
-	if _, err := s.repo.CreateBot(bot); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	if err := s.connectBot(bot); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
+	if _, err := s.repo.CreateBot(bot); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	bytes, err := json.Marshal(bot)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"support-bot/models"
 )
@@ -16,13 +17,19 @@ const (
 	sendMessageURL = baseURL + "send_message"
 )
 
+type LoggingRoundTripper struct {
+	Proxied http.RoundTripper
+}
+
 type Client struct {
 	http *http.Client
 }
 
 func NewClient() *Client {
 	return &Client{
-		http: &http.Client{},
+		http: &http.Client{
+			Transport: LoggingRoundTripper{http.DefaultTransport},
+		},
 	}
 }
 
@@ -36,6 +43,7 @@ func (c Client) ConnectNewBot(token, path string) error {
 	if err := json.NewEncoder(b).Encode(sub); err != nil {
 		return fmt.Errorf("encoding subsc")
 	}
+	log.Printf("making request with data %v", sub)
 	return c.makeRequest(setWebhookURL, token, b)
 }
 
@@ -48,5 +56,6 @@ func (c Client) SendMessage(msg *models.Message, token, receiver string) error {
 	if err := json.NewEncoder(b).Encode(m); err != nil {
 		return fmt.Errorf("encoding message")
 	}
+	log.Printf("making request with data %v", m)
 	return c.makeRequest(sendMessageURL, token, b)
 }
