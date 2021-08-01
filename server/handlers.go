@@ -16,11 +16,12 @@ func (s *Server) webhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var objmap map[string]json.RawMessage
+	var objmap map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&objmap)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+
 	log.Println(objmap)
 }
 

@@ -18,3 +18,9 @@ type Message struct {
 func NewMessage(contentType MessageType, text string) *Message {
 	return &Message{ContentType: contentType, Text: text}
 }
+
+type Callback struct {
+	Event        string `json:"event"`
+	Timestamp    int64  `json:"timestamp"`
+	MessageToken int64  `json:"message_token"`
+}
