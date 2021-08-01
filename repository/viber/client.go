@@ -17,19 +17,13 @@ const (
 	sendMessageURL = baseURL + "send_message"
 )
 
-type LoggingRoundTripper struct {
-	Proxied http.RoundTripper
-}
-
 type Client struct {
 	http *http.Client
 }
 
 func NewClient() *Client {
 	return &Client{
-		http: &http.Client{
-			Transport: LoggingRoundTripper{http.DefaultTransport},
-		},
+		http: &http.Client{},
 	}
 }
 
