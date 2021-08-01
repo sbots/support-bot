@@ -8,7 +8,6 @@ import (
 	"log"
 	"net/http"
 	"support-bot/models"
-	"support-bot/repository/telegram"
 )
 
 func (s *Server) webhook(w http.ResponseWriter, r *http.Request) {
@@ -17,13 +16,12 @@ func (s *Server) webhook(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var update telegram.Update
-	err := json.NewDecoder(r.Body).Decode(&update)
+	var objmap map[string]json.RawMessage
+	err := json.NewDecoder(r.Body).Decode(&objmap)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-
-	log.Println(update.Message.Chat, update.Message.Text)
+	log.Println(objmap)
 }
 
 func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
