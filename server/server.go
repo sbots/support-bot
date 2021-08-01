@@ -10,7 +10,8 @@ import (
 
 type Server struct {
 	http   *http.Server
-	tg     telegram
+	tg     botsPlatform
+	vb     botsPlatform
 	domain string
 	repo   repo
 }
@@ -20,21 +21,25 @@ type repo interface {
 	CreateBot(bot *models.Bot) (*models.Bot, error)
 }
 
-type telegram interface {
+type botsPlatform interface {
 	ConnectNewBot(token, path string) error
-	SendMessage(msg *models.Message, token string) error
+	SendMessage(msg *models.Message, token, receiver string) error
 }
 
 const (
 	telegramEndpoint       = "/bots/telegram/"
 	telegramNewBotEndpoint = telegramEndpoint + "new/"
 	telegramSendMessage    = telegramEndpoint + "send/"
+	viberEndpoint          = "/bots/viber/"
+	viberNewBotEndpoint    = viberEndpoint + "new/"
+	viberSendMessage       = viberEndpoint + "/send"
 )
 
-func New(addr, domain string, tg telegram, r repo) *Server {
+func New(addr, domain string, tg, vb botsPlatform, r repo) *Server {
 	s := &Server{
 		http:   &http.Server{Addr: addr},
 		tg:     tg,
+		vb:     vb,
 		domain: domain,
 		repo:   r,
 	}
@@ -58,13 +63,21 @@ func (s Server) Run(ctx context.Context) error {
 func (s *Server) router() *mux.Router {
 	router := mux.NewRouter()
 
-	router.HandleFunc(telegramEndpoint+"{bot}", s.telegramHandler)
+	router.HandleFunc(telegramEndpoint+"{bot}", s.webhook)
 	router.HandleFunc(telegramNewBotEndpoint, s.newBot)
 	router.HandleFunc(telegramSendMessage+"{bot}", s.send)
+
+	router.HandleFunc(viberEndpoint+"{bot}", s.webhook)
+	router.HandleFunc(viberNewBotEndpoint, s.newBot)
+	router.HandleFunc(viberSendMessage+"{bot}", s.send)
 
 	return router
 }
 
-func (s *Server) getEndpointForBot(id string) string {
+func (s *Server) getEndpointForTgBot(id string) string {
 	return telegramEndpoint + id
+}
+
+func (s *Server) getEndpointForVbBot(id string) string {
+	return viberEndpoint + id
 }

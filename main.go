@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"log"
-	"support-bot/bots/telegram"
 	"support-bot/config"
 	"support-bot/persistence"
+	"support-bot/repository/telegram"
+	"support-bot/repository/viber"
 	"support-bot/server"
 )
 
@@ -23,7 +24,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	srv := server.New(cfg.GetAddr(), cfg.Domain, telegram.NewClient(), repo)
+	srv := server.New(cfg.GetAddr(), cfg.Domain, telegram.NewClient(), viber.NewClient(), repo)
 
 	if err := srv.Run(ctx); err != nil {
 		log.Fatal(err)

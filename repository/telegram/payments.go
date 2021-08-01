@@ -1,4 +1,4 @@
-package models
+package telegram
 
 type Invoice struct {
 	// Title product name

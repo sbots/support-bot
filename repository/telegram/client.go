@@ -1,11 +1,20 @@
 package telegram
 
 import (
-	"errors"
 	"fmt"
 	tg "github.com/go-telegram-bot-api/telegram-bot-api"
+	"log"
 	"net/url"
+	"strconv"
 	"support-bot/models"
+)
+
+const (
+	// APIEndpoint is the endpoint for all API methods,
+	// with formatting for Sprintf.
+	APIEndpoint = "https://api.telegram.org/bot%s/%s"
+	// FileEndpoint is the endpoint for downloading a file from Telegram.
+	FileEndpoint = "https://api.telegram.org/file/bot%s/%s"
 )
 
 type Client struct {
@@ -15,17 +24,23 @@ func NewClient() *Client {
 	return &Client{}
 }
 
-func (c Client) SendMessage(msg *models.Message, token string) error {
+func (c Client) SendMessage(msg *models.Message, token, receiver string) error {
 	if msg == nil {
-		return errors.New("message input is missing")
+		return fmt.Errorf("message input is missing")
 	}
-	m := tg.NewMessage(msg.Chat.ID, msg.Text)
+
+	chat, err := strconv.ParseInt(receiver, 0, 32)
+	if err != nil {
+		return fmt.Errorf("parsing chat id: %w", err)
+	}
+
+	m := tg.NewMessage(chat, msg.Text)
 	bot, err := tg.NewBotAPI(token)
 	if err != nil {
-		return errors.New("get bot by token")
+		return fmt.Errorf("get bot by token")
 	}
 	resp, err := bot.Send(m)
-	fmt.Println(resp)
+	log.Println(resp)
 	if err != nil {
 		return fmt.Errorf("sending message %w", err)
 	}

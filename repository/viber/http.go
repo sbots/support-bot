@@ -1,37 +1,15 @@
 package viber
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
-	"support-bot/models"
 )
 
-const apiEndpoint = "https://chatapi.viber.com/pa/set_webhook"
-
-type Client struct {
-	http *http.Client
-}
-
-func NewClient() *Client {
-	return &Client{
-		http: &http.Client{},
-	}
-}
-
-func (c Client) ConnectNewBot(token, path string) error {
-	sub, b := &models.ViberSubscriptionRequest{
-		Url:        path,
-		EventTypes: models.AllViberEventTypes,
-		SendName:   true,
-		SendPhoto:  true,
-	}, new(bytes.Buffer)
-	if err := json.NewEncoder(b).Encode(sub); err != nil {
-		return fmt.Errorf("encoding subsc")
-	}
-	req, err := http.NewRequest(http.MethodPost, apiEndpoint, b)
+func (c Client) makeRequest(url, token string, b io.Reader) error {
+	req, err := http.NewRequest(http.MethodPost, url, b)
 	if err != nil {
 		return fmt.Errorf("creating request: %w", err)
 	}
@@ -43,16 +21,12 @@ func (c Client) ConnectNewBot(token, path string) error {
 	}
 	defer rsp.Body.Close()
 
-	return handleResponse(rsp)
-}
-
-func handleResponse(rsp *http.Response) error {
 	body, err := ioutil.ReadAll(rsp.Body)
 	if err != nil {
 		return fmt.Errorf("reading response body: %w", err)
 	}
 
-	var response models.ViberSubscriptionResponse
+	var response SubscriptionResponse
 	if err := json.Unmarshal(body, &response); err != nil {
 		return fmt.Errorf("unmarshaling response: %w", err)
 	}

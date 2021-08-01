@@ -1,4 +1,4 @@
-package models
+package telegram
 
 // Chat contains information about the place a message was sent.
 type Chat struct {

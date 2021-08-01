@@ -1,4 +1,4 @@
-package models
+package telegram
 
 type Update struct {
 	// UpdateID is the update's unique identifier.

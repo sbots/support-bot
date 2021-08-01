@@ -1,4 +1,4 @@
-package models
+package telegram
 
 type User struct {
 	// ID is a unique identifier for this user or bot

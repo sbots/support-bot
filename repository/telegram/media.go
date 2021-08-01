@@ -1,4 +1,4 @@
-package models
+package telegram
 
 type ChatPhoto struct {
 	// SmallFileID is a file identifier of small (160x160) chat photo.

@@ -1,4 +1,4 @@
-package models
+package telegram
 
 type Message struct {
 	MessageID int   `json:"message_id"`

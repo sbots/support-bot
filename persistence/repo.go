@@ -25,7 +25,13 @@ func (r *Repository) CreateBot(bot *models.Bot) (*models.Bot, error) {
 }
 
 func (r *Repository) GetBot(id string) (*models.Bot, error) {
-	const query = `select * from bots where id = $1 limit 1`
+	const query = `select * from bots where id = $1 limit 1
+create table bots
+(
+	id int
+);
+
+`
 	row := r.db.QueryRow(query, id)
 	var bot models.Bot
 	if err := row.Scan(&bot.ID, &bot.Token); err != nil {
@@ -54,7 +60,8 @@ func prepare(db *sql.DB) error {
 	const query = `
 	create table if not exists bots(
 		"id" text not null primary key,
-		"token" text 
+		"token" text not null,
+		"type" text not null                   
 	)`
 	statement, err := db.Prepare(query)
 	if err != nil {
