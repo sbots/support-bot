@@ -22,7 +22,7 @@ func NewAuthenticator(key []byte) (*Authenticator, error) {
 
 func (a *Authenticator) GetJWT(user *models.User) (string, error) {
 	token := jwt.New(jwt.SigningMethodES256)
-	claims := token.Claims.(jwt.MapClaims)
+	claims := token.Claims.(jwt.MapClaims) // nolint
 
 	claims["authorized"] = true
 	claims["name"] = user.Name

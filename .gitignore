@@ -1,3 +1,4 @@
 vendor
 .idea
-*.db
+test.db
+support-bot

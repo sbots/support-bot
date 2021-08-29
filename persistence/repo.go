@@ -2,6 +2,7 @@ package persistence
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 )
@@ -17,7 +18,7 @@ func NewRepository() (*Repository, error) {
 	}
 
 	if err := migrate(db); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("making migration: %w", err)
 	}
 
 	return &Repository{

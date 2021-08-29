@@ -81,13 +81,14 @@ func (s *Server) newUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := s.repo.UpsertUser(user); err != nil {
+	user, err = s.repo.UpsertUser(user)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	token, err := s.authenticator.GetJWT(user)
-	if err != nil{
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
