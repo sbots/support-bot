@@ -13,7 +13,7 @@ func (r *Repository) UpsertUser(user *models.User) (*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, err = statement.Exec(user.ID, user.Name, user.Company, user.Surname, user.Email, user.Phone, user.CreatedAt, user.UpdatedAt)
+	_, err = statement.Exec(user.ID, user.Name, user.Password, user.Company, user.Surname, user.Email, user.Phone, user.CreatedAt, user.UpdatedAt)
 	if err != nil {
 		return nil, fmt.Errorf("executing upsert user statement %w", err)
 	}
