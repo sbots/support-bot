@@ -51,6 +51,7 @@ func migrate(db *sql.DB) error {
 		    phone varchar(225) not null,
 			created_at timestamp not null,
 			updated_at timestamp not null,
+		    company_id UUID not null,
 			foreign key (company_id) references tenants (id) ON DELETE CASCADE ON UPDATE NO ACTION
 		);`
 
