@@ -2,23 +2,31 @@ package server
 
 import (
 	"context"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"support-bot/models"
 )
 
 type Server struct {
-	http   *http.Server
-	tg     botsPlatform
-	vb     botsPlatform
-	domain string
-	repo   repo
+	http          *http.Server
+	tg            botsPlatform
+	vb            botsPlatform
+	domain        string
+	repo          repo
+	authenticator authenticator
 }
 
 type repo interface {
 	GetBot(id string) (*models.Bot, error)
-	CreateBot(bot *models.Bot) (*models.Bot, error)
+	UpsertBot(bot *models.Bot) (*models.Bot, error)
+
+	UpsertTenant(tenant *models.Tenant) (*models.Tenant, error)
+	UpsertUser(user *models.User) (*models.User, error)
+	GetUserByEmail(email, tenant string) (*models.User, error)
+	GetUserByID(id string) (*models.User, error)
+	GetTenantByID(id string) (*models.Tenant, error)
+
+	TenantHasSuperuser(tenantID string) (bool, error)
 }
 
 type botsPlatform interface {
@@ -26,22 +34,18 @@ type botsPlatform interface {
 	SendMessage(msg *models.Message, token, receiver string) error
 }
 
-const (
-	telegramEndpoint       = "/bots/telegram/"
-	telegramNewBotEndpoint = telegramEndpoint + "new/"
-	telegramSendMessage    = telegramEndpoint + "send/"
-	viberEndpoint          = "/bots/viber/"
-	viberNewBotEndpoint    = viberEndpoint + "new/"
-	viberSendMessage       = viberEndpoint + "/send"
-)
+type authenticator interface {
+	GetJWT(user *models.User) (string, error)
+}
 
-func New(addr, domain string, tg, vb botsPlatform, r repo) *Server {
+func New(addr, domain string, tg, vb botsPlatform, r repo, auth authenticator) *Server {
 	s := &Server{
-		http:   &http.Server{Addr: addr},
-		tg:     tg,
-		vb:     vb,
-		domain: domain,
-		repo:   r,
+		http:          &http.Server{Addr: addr},
+		tg:            tg,
+		vb:            vb,
+		domain:        domain,
+		repo:          r,
+		authenticator: auth,
 	}
 	s.http.Handler = s.router()
 	return s
@@ -58,20 +62,6 @@ func (s Server) Run(ctx context.Context) error {
 	}()
 	log.Print("starting server")
 	return s.http.ListenAndServe()
-}
-
-func (s *Server) router() *mux.Router {
-	router := mux.NewRouter()
-
-	router.HandleFunc(telegramEndpoint+"{bot}", s.webhook)
-	router.HandleFunc(telegramNewBotEndpoint, s.newBot)
-	router.HandleFunc(telegramSendMessage+"{bot}", s.send)
-
-	router.HandleFunc(viberEndpoint+"{bot}", s.webhook)
-	router.HandleFunc(viberNewBotEndpoint, s.newBot)
-	router.HandleFunc(viberSendMessage+"{bot}", s.send)
-
-	return router
 }
 
 func (s *Server) getEndpointForTgBot(id string) string {

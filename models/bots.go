@@ -1,18 +1,20 @@
 package models
 
+import uuid "github.com/satori/go.uuid"
+
 const (
 	botTPlatformTelegram = "telegram"
 	botPlatformViber     = "viber"
 )
 
 type Bot struct {
-	ID    string `json:"id" gorm:"id"`
-	Token string `json:"token" gorm:"token"`
-	Type  string `json:"type" gorm:"type"`
+	ID    string `json:"id"`
+	Token string `json:"token"`
+	Type  string `json:"type"`
 }
 
-func NewBot(id, token, platform string) *Bot {
-	return &Bot{ID: id, Token: token, Type: platform}
+func NewBot(token, platform string) *Bot {
+	return &Bot{ID: uuid.NewV4().String(), Token: token, Type: platform}
 }
 
 func (b Bot) IsTelegramBot() bool {

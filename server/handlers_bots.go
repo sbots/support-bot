@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	uuid "github.com/satori/go.uuid"
 	"log"
 	"net/http"
 	"support-bot/models"
@@ -44,13 +43,12 @@ func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id := uuid.NewV4().String()
-	bot := models.NewBot(id, data.Token, data.Type)
+	bot := models.NewBot(data.Token, data.Type)
 	if err := s.connectBot(bot); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	if _, err := s.repo.CreateBot(bot); err != nil {
+	if _, err := s.repo.UpsertBot(bot); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

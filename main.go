@@ -3,14 +3,13 @@ package main
 import (
 	"context"
 	"log"
+	"support-bot/auth"
 	"support-bot/config"
 	"support-bot/persistence"
 	"support-bot/repository/telegram"
 	"support-bot/repository/viber"
 	"support-bot/server"
 )
-
-const testBotID = "1"
 
 func main() {
 	ctx := context.Background()
@@ -24,7 +23,11 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	srv := server.New(cfg.GetAddr(), cfg.Domain, telegram.NewClient(), viber.NewClient(), repo)
+	authenticator, err := auth.NewAuthenticator(cfg.SecretKey)
+	if err != nil {
+		log.Fatal(err)
+	}
+	srv := server.New(cfg.GetAddr(), cfg.Domain, telegram.NewClient(), viber.NewClient(), repo, authenticator)
 
 	if err := srv.Run(ctx); err != nil {
 		log.Fatal(err)
