@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"support-bot/models"
+	models2 "support-bot/service/models"
 )
 
 const minAPIVersion = 1
@@ -41,7 +41,7 @@ func (c Client) ConnectNewBot(token, path string) error {
 	return c.makeRequest(setWebhookURL, token, b)
 }
 
-func (c Client) SendMessage(msg *models.Message, token, receiver string) error {
+func (c Client) SendMessage(msg *models2.Message, token, receiver string) error {
 	if msg == nil {
 		return fmt.Errorf("message input is missing")
 	}

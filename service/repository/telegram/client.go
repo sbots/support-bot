@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/url"
 	"strconv"
-	"support-bot/models"
+	models2 "support-bot/service/models"
 )
 
 const (
@@ -24,7 +24,7 @@ func NewClient() *Client {
 	return &Client{}
 }
 
-func (c Client) SendMessage(msg *models.Message, token, receiver string) error {
+func (c Client) SendMessage(msg *models2.Message, token, receiver string) error {
 	if msg == nil {
 		return fmt.Errorf("message input is missing")
 	}

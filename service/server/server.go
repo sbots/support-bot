@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"support-bot/models"
+	models2 "support-bot/service/models"
 )
 
 type Server struct {
@@ -17,25 +17,25 @@ type Server struct {
 }
 
 type repo interface {
-	GetBot(id string) (*models.Bot, error)
-	UpsertBot(bot *models.Bot) (*models.Bot, error)
+	GetBot(id string) (*models2.Bot, error)
+	UpsertBot(bot *models2.Bot) (*models2.Bot, error)
 
-	UpsertTenant(tenant *models.Tenant) (*models.Tenant, error)
-	UpsertUser(user *models.User) (*models.User, error)
-	GetUserByEmail(email, tenant string) (*models.User, error)
-	GetUserByID(id string) (*models.User, error)
-	GetTenantByID(id string) (*models.Tenant, error)
+	UpsertTenant(tenant *models2.Tenant) (*models2.Tenant, error)
+	UpsertUser(user *models2.User) (*models2.User, error)
+	GetUserByEmail(email, tenant string) (*models2.User, error)
+	GetUserByID(id string) (*models2.User, error)
+	GetTenantByID(id string) (*models2.Tenant, error)
 
 	TenantHasSuperuser(tenantID string) (bool, error)
 }
 
 type botsPlatform interface {
 	ConnectNewBot(token, path string) error
-	SendMessage(msg *models.Message, token, receiver string) error
+	SendMessage(msg *models2.Message, token, receiver string) error
 }
 
 type authenticator interface {
-	GetJWT(user *models.User) (string, error)
+	GetJWT(user *models2.User) (string, error)
 }
 
 func New(addr, domain string, tg, vb botsPlatform, r repo, auth authenticator) *Server {

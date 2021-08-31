@@ -3,7 +3,7 @@ package server
 import (
 	"encoding/json"
 	"net/http"
-	"support-bot/models"
+	models2 "support-bot/service/models"
 )
 
 func (s *Server) newTenant(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +24,7 @@ func (s *Server) newTenant(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tenant := models.NewTenant(data.Name)
+	tenant := models2.NewTenant(data.Name)
 
 	if _, err := s.repo.UpsertTenant(tenant); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -75,7 +75,7 @@ func (s *Server) newUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := models.NewUser(data.Name, data.Surname, data.Password, data.Company, data.Email, data.Phone)
+	user, err := models2.NewUser(data.Name, data.Surname, data.Password, data.Company, data.Email, data.Phone)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
