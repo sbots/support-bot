@@ -3,7 +3,7 @@ package persistence
 import (
 	"database/sql"
 	"fmt"
-	models2 "support-bot/service/models"
+	models2 "support-bot/api/models"
 )
 
 func (r *Repository) UpsertUser(user *models2.User) (*models2.User, error) {

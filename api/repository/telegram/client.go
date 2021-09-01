@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/url"
 	"strconv"
-	models2 "support-bot/service/models"
+	models2 "support-bot/api/models"
 )
 
 const (

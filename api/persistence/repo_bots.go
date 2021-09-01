@@ -2,7 +2,7 @@ package persistence
 
 import (
 	"fmt"
-	models2 "support-bot/service/models"
+	models2 "support-bot/api/models"
 )
 
 func (r *Repository) UpsertBot(bot *models2.Bot) (*models2.Bot, error) {

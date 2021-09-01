@@ -3,31 +3,31 @@ package main
 import (
 	"context"
 	"log"
-	auth2 "support-bot/service/auth"
-	config2 "support-bot/service/config"
-	persistence2 "support-bot/service/persistence"
-	telegram2 "support-bot/service/repository/telegram"
-	viber2 "support-bot/service/repository/viber"
-	server2 "support-bot/service/server"
+	"support-bot/api/auth"
+	"support-bot/api/config"
+	"support-bot/api/persistence"
+	"support-bot/api/repository/telegram"
+	"support-bot/api/repository/viber"
+	"support-bot/api/server"
 )
 
 func main() {
 	ctx := context.Background()
 
-	cfg, err := config2.FromOS()
+	cfg, err := config.FromOS()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	repo, err := persistence2.NewRepository()
+	repo, err := persistence.NewRepository()
 	if err != nil {
 		log.Fatal(err)
 	}
-	authenticator, err := auth2.NewAuthenticator(cfg.SecretKey)
+	authenticator, err := auth.NewAuthenticator(cfg.SecretKey)
 	if err != nil {
 		log.Fatal(err)
 	}
-	srv := server2.New(cfg.GetAddr(), cfg.Domain, telegram2.NewClient(), viber2.NewClient(), repo, authenticator)
+	srv := server.New(cfg.GetAddr(), cfg.Domain, telegram.NewClient(), viber.NewClient(), repo, authenticator)
 
 	if err := srv.Run(ctx); err != nil {
 		log.Fatal(err)

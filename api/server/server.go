@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
-	models2 "support-bot/service/models"
+	models2 "support-bot/api/models"
 )
 
 type Server struct {

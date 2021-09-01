@@ -3,7 +3,7 @@ package auth
 import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	models2 "support-bot/service/models"
+	models2 "support-bot/api/models"
 	"time"
 )
 
@@ -26,7 +26,7 @@ func (a *Authenticator) GetJWT(user *models2.User) (string, error) {
 
 	claims["authorized"] = true
 	claims["user_id"] = user.ID
- 	claims["iss"] = "support-bot-platform-test"
+	claims["iss"] = "support-bot-platform-test"
 	claims["exp"] = time.Now().Add(time.Minute * 1).Unix()
 
 	tokenString, err := token.SignedString(a.signingKey)

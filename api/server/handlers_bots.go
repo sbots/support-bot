@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	models2 "support-bot/service/models"
+	models2 "support-bot/api/models"
 )
 
 func (s *Server) webhook(w http.ResponseWriter, r *http.Request) {

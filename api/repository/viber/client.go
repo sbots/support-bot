@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	models2 "support-bot/service/models"
+	models2 "support-bot/api/models"
 )
 
 const minAPIVersion = 1
