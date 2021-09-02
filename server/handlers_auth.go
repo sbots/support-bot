@@ -3,7 +3,7 @@ package server
 import (
 	"encoding/json"
 	"net/http"
-	"support-bot/api/models"
+	"support-bot/models"
 )
 
 func (s *Server) newTenant(w http.ResponseWriter, r *http.Request) {

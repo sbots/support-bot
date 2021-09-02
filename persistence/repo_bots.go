@@ -2,10 +2,10 @@ package persistence
 
 import (
 	"fmt"
-	models2 "support-bot/api/models"
+	"support-bot/models"
 )
 
-func (r *Repository) UpsertBot(bot *models2.Bot) (*models2.Bot, error) {
+func (r *Repository) UpsertBot(bot *models.Bot) (*models.Bot, error) {
 	const query = `insert into bots (id, token) values (?,?)`
 	statement, err := r.db.Prepare(query)
 	if err != nil {
@@ -18,10 +18,10 @@ func (r *Repository) UpsertBot(bot *models2.Bot) (*models2.Bot, error) {
 	return bot, nil
 }
 
-func (r *Repository) GetBot(id string) (*models2.Bot, error) {
+func (r *Repository) GetBot(id string) (*models.Bot, error) {
 	const query = `select * from bots where id = $1 limit 1`
 	row := r.db.QueryRow(query, id)
-	var bot models2.Bot
+	var bot models.Bot
 	if err := row.Scan(&bot.ID, &bot.Token); err != nil {
 		return nil, err
 	}

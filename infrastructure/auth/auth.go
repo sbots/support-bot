@@ -3,7 +3,7 @@ package auth
 import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	models2 "support-bot/api/models"
+	"support-bot/models"
 	"time"
 )
 
@@ -11,16 +11,16 @@ type Authenticator struct {
 	signingKey []byte
 }
 
-func NewAuthenticator(key []byte) (*Authenticator, error) {
+func NewAuthenticator(key string) (*Authenticator, error) {
 	if len(key) == 0 {
 		return nil, fmt.Errorf("signing key is required")
 	}
 	return &Authenticator{
-		signingKey: key,
+		signingKey: []byte(key),
 	}, nil
 }
 
-func (a *Authenticator) GetJWT(user *models2.User) (string, error) {
+func (a *Authenticator) GetJWT(user *models.User) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims) // nolint
 

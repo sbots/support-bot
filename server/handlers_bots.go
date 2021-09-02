@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	models2 "support-bot/api/models"
+	"support-bot/models"
 )
 
 func (s *Server) webhook(w http.ResponseWriter, r *http.Request) {
@@ -43,7 +43,7 @@ func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bot := models2.NewBot(data.Token, data.Type)
+	bot := models.NewBot(data.Token, data.Type)
 	if err := s.connectBot(bot); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -87,7 +87,7 @@ func (s Server) send(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	msg := models2.NewMessage("", req.Text)
+	msg := models.NewMessage("", req.Text)
 	bot, err := s.repo.GetBot(mux.Vars(r)["bot"])
 	if err != nil {
 		http.NotFound(w, r)
@@ -102,7 +102,7 @@ func (s Server) send(w http.ResponseWriter, r *http.Request) {
 }
 
 // TODO: move this check to repository
-func (s Server) connectBot(bot *models2.Bot) error {
+func (s Server) connectBot(bot *models.Bot) error {
 	if bot.IsTelegramBot() {
 		path := s.domain + s.getEndpointForTgBot(bot.ID)
 		return s.tg.ConnectNewBot(bot.Token, path)
@@ -114,7 +114,7 @@ func (s Server) connectBot(bot *models2.Bot) error {
 	return fmt.Errorf("unsupported platform")
 }
 
-func (s Server) sendMessage(bot *models2.Bot, msg *models2.Message, receiver string) error {
+func (s Server) sendMessage(bot *models.Bot, msg *models.Message, receiver string) error {
 	if bot.IsTelegramBot() {
 		return s.tg.SendMessage(msg, bot.Token, receiver)
 	}

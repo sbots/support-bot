@@ -1,5 +1,14 @@
 include linting.mk
 
+.PHONY: build_ui
+build_ui:
+	cd ui; \
+	yarn install; \
+	NEXT_TELEMETRY_DISABLED=1 yarn run export
+
 local_run:
-	export TEST_BOT_TOKEN="1", DOMAIN="1", PORT="8080",  SECRET_KEY="asd"
 	go run main.go
+
+deps:
+	go mod tidy
+	go mod vendor
