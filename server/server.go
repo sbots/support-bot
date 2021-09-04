@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 	"support-bot/infrastructure/auth"
@@ -20,11 +21,11 @@ type Server struct {
 
 type repo interface {
 	GetBot(id string) (*models.Bot, error)
-	UpsertBot(bot *models.Bot) (*models.Bot, error)
+	UpsertBot(bot *models.Bot) error
 
-	UpsertTenant(tenant *models.Tenant) (*models.Tenant, error)
-	UpsertUser(user *models.User) (*models.User, error)
-	GetUserByEmail(email, tenant string) (*models.User, error)
+	UpsertTenant(tenant *models.Tenant) error
+	UpsertUser(user *models.User) error
+	GetUserByEmail(email string) (*models.User, error)
 	GetUserByID(id string) (*models.User, error)
 	GetTenantByID(id string) (*models.Tenant, error)
 
@@ -39,6 +40,9 @@ type botsPlatform interface {
 type authenticator interface {
 	GetToken(user *models.User) (string, error)
 	ParseToken(token string) (auth.JWTToken, error)
+
+	SetServiceTokenToContext(ctx context.Context, serviceToken auth.JWTToken) context.Context
+	GetServiceTokenFromContext(ctx context.Context) auth.JWTToken
 }
 
 func New(addr, domain string, tg, vb botsPlatform, r repo, auth authenticator) *Server {
@@ -75,7 +79,7 @@ func (s *Server) getEndpointForVbBot(id string) string {
 	return viberEndpoint + id
 }
 
-func (s *Server) prepareResponse(w http.ResponseWriter, rsp interface{}) error {
+func prepareResponse(w http.ResponseWriter, rsp interface{}) error {
 	bytes, err := json.Marshal(rsp)
 	if err != nil {
 		return err
@@ -85,6 +89,11 @@ func (s *Server) prepareResponse(w http.ResponseWriter, rsp interface{}) error {
 		return err
 	}
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
 	return nil
+}
+
+func closeBody(b io.ReadCloser) {
+	if err := b.Close(); err != nil {
+		log.Println(err)
+	}
 }

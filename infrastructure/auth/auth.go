@@ -1,11 +1,16 @@
 package auth
 
 import (
+	"context"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"support-bot/models"
 	"time"
 )
+
+type contextKey int
+
+const serviceTokenContextKey contextKey = 1
 
 type Authenticator struct {
 	signingKey []byte
@@ -39,6 +44,14 @@ func (a *Authenticator) ParseToken(tokenString string) (JWTToken, error) {
 		return nil, err
 	}
 	return token, err
+}
+
+func (a *Authenticator) SetServiceTokenToContext(ctx context.Context, serviceToken JWTToken) context.Context {
+	return context.WithValue(ctx, serviceTokenContextKey, serviceToken)
+}
+
+func (a *Authenticator) GetServiceTokenFromContext(ctx context.Context) JWTToken {
+	return ctx.Value(serviceTokenContextKey).(*Token)
 }
 
 func (a *Authenticator) signToken(t *Token) (string, error) {

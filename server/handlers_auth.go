@@ -17,7 +17,7 @@ func (s *Server) newTenant(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	defer r.Body.Close()
+	defer closeBody(r.Body)
 
 	if err := decoder.Decode(&data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -25,26 +25,18 @@ func (s *Server) newTenant(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tenant := models.NewTenant(data.Name)
-
-	if _, err := s.repo.UpsertTenant(tenant); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	bytes, err := json.Marshal(tenant)
-	if err != nil {
+	if err := s.repo.UpsertTenant(tenant); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if _, err := w.Write(bytes); err != nil {
+	if err := prepareResponse(w, tenant); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 }
 
-func (s *Server) newUser(w http.ResponseWriter, r *http.Request) {
+func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "POST requests only allowed", http.StatusMethodNotAllowed)
 		return
@@ -60,7 +52,7 @@ func (s *Server) newUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	defer r.Body.Close()
+	defer closeBody(r.Body)
 
 	if err := decoder.Decode(&data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -81,10 +73,41 @@ func (s *Server) newUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err = s.repo.UpsertUser(user)
+	err = s.repo.UpsertUser(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+	w.WriteHeader(http.StatusCreated)
+}
+
+func (s *Server) signIn(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "POST requests only allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	var data struct {
+		Password string `json:"password"`
+		Email    string `json:"email"`
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	defer closeBody(r.Body)
+
+	if err := decoder.Decode(&data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	user, err := s.repo.GetUserByEmail(data.Email)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	if !user.ValidPassword(data.Password) {
+		http.Error(w, "wrong password", http.StatusForbidden)
 	}
 
 	token, err := s.authenticator.GetToken(user)
@@ -93,27 +116,8 @@ func (s *Server) newUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bytes, err := json.Marshal(token)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if _, err := w.Write(bytes); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-}
-
-func (s *Server) getUser(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "POST requests only allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	if err := s.prepareResponse(w, nil); err != nil {
+	if err := prepareResponse(w, token); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+	w.WriteHeader(http.StatusOK)
 }

@@ -5,17 +5,17 @@ import (
 	"support-bot/models"
 )
 
-func (r *Repository) UpsertBot(bot *models.Bot) (*models.Bot, error) {
+func (r *Repository) UpsertBot(bot *models.Bot) error {
 	const query = `insert into bots (id, token) values (?,?)`
 	statement, err := r.db.Prepare(query)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	_, err = statement.Exec(bot.ID, bot.Token)
 	if err != nil {
-		return nil, fmt.Errorf("executing upsert bot statement %w", err)
+		return fmt.Errorf("executing upsert bot statement %w", err)
 	}
-	return bot, nil
+	return nil
 }
 
 func (r *Repository) GetBot(id string) (*models.Bot, error) {

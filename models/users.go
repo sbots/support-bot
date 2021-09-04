@@ -50,7 +50,7 @@ func NewUser(name, surname, password, companyID, email, phone string) (*User, er
 	}, nil
 }
 
-func (u *User) CheckPasswordHash(password string) bool {
+func (u *User) ValidPassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
 	return err == nil
 }

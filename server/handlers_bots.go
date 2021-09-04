@@ -17,10 +17,10 @@ func (s *Server) webhook(w http.ResponseWriter, r *http.Request) {
 
 	var objmap map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&objmap)
+	defer closeBody(r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-
 	log.Println(objmap)
 }
 
@@ -36,7 +36,7 @@ func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	defer r.Body.Close()
+	defer closeBody(r.Body)
 
 	if err := decoder.Decode(&data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -48,21 +48,14 @@ func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	if _, err := s.repo.UpsertBot(bot); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	bytes, err := json.Marshal(bot)
-	if err != nil {
+	if err := s.repo.UpsertBot(bot); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if _, err := w.Write(bytes); err != nil {
+	if err := prepareResponse(w, bot); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 }
 
@@ -73,7 +66,7 @@ func (s Server) send(w http.ResponseWriter, r *http.Request) {
 	}
 
 	decoder := json.NewDecoder(r.Body)
-	defer r.Body.Close()
+	defer closeBody(r.Body)
 
 	var req struct {
 		Receiver string `json:"receiver"`
@@ -90,10 +83,11 @@ func (s Server) send(w http.ResponseWriter, r *http.Request) {
 	msg := models.NewMessage("", req.Text)
 	bot, err := s.repo.GetBot(mux.Vars(r)["bot"])
 	if err != nil {
-		http.NotFound(w, r)
+		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	}
-	if err := s.sendMessage(bot, msg, req.Receiver); err != nil {
+	err = s.sendMessage(bot, msg, req.Receiver)
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
