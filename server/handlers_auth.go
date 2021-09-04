@@ -106,3 +106,20 @@ func (s *Server) newUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 }
+
+func (s *Server) getUser(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "POST requests only allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	user, err := s.repo.GetUserByID()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := s.prepareResponse(w, user); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}

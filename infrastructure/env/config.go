@@ -11,6 +11,7 @@ type Config struct {
 	Host      string `envconfig:"HOST" default:"localhost"`
 	Port      string `envconfig:"PORT" default:"8080"`
 	SecretKey string `envconfig:"SECRET_KEY" default:"secret"`
+	DB        string `envconfig:"DATABASE_URL"`
 }
 
 func FromOS() (*Config, error) {

@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net/http"
 	"support-bot/models"
@@ -70,4 +71,18 @@ func (s *Server) getEndpointForTgBot(id string) string {
 
 func (s *Server) getEndpointForVbBot(id string) string {
 	return viberEndpoint + id
+}
+
+func (s *Server) prepareResponse(w http.ResponseWriter, rsp interface{}) error {
+	bytes, err := json.Marshal(rsp)
+	if err != nil {
+		return err
+	}
+
+	if _, err := w.Write(bytes); err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	return nil
 }

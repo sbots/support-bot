@@ -3,7 +3,7 @@ package persistence
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 	"log"
 )
 
@@ -11,8 +11,8 @@ type Repository struct {
 	db *sql.DB
 }
 
-func NewRepository() (*Repository, error) {
-	db, err := sql.Open("sqlite3", "test.db")
+func NewRepository(dbURL string) (*Repository, error) {
+	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		return nil, err
 	}
