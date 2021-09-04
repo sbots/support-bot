@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"support-bot/infrastructure/auth"
 	"support-bot/models"
 )
 
@@ -36,7 +37,8 @@ type botsPlatform interface {
 }
 
 type authenticator interface {
-	GetJWT(user *models.User) (string, error)
+	GetToken(user *models.User) (string, error)
+	ParseToken(token string) (auth.JWTToken, error)
 }
 
 func New(addr, domain string, tg, vb botsPlatform, r repo, auth authenticator) *Server {

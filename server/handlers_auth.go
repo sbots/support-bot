@@ -87,7 +87,7 @@ func (s *Server) newUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := s.authenticator.GetJWT(user)
+	token, err := s.authenticator.GetToken(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -113,13 +113,7 @@ func (s *Server) getUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := s.repo.GetUserByID()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	if err := s.prepareResponse(w, user); err != nil {
+	if err := s.prepareResponse(w, nil); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

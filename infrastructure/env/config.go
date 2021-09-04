@@ -3,15 +3,19 @@ package env
 import (
 	"fmt"
 	"github.com/kelseyhightower/envconfig"
+	"time"
 )
 
 type Config struct {
-	TestToken string `envconfig:"TEST_BOT_TOKEN" default:"test"`
-	Domain    string `envconfig:"DOMAIN"`
-	Host      string `envconfig:"HOST" default:"localhost"`
-	Port      string `envconfig:"PORT" default:"8080"`
-	SecretKey string `envconfig:"SECRET_KEY" default:"secret"`
-	DB        string `envconfig:"DATABASE_URL"`
+	Domain          string        `envconfig:"DOMAIN"`
+	Host            string        `envconfig:"HOST" default:"localhost"`
+	Port            string        `envconfig:"PORT" default:"8080"`
+
+	DB              string        `envconfig:"DATABASE_URL"`
+
+	SecretKey       string        `envconfig:"AUTH_SECRET_KEY" default:"secret"`
+	TokenIssuer     string        `envconfig:"AUTH_TOKEN_ISSUER" default:"support-bot-platform-test"`
+	TokenExpiration time.Duration `envconfig:"AUTH_TOKEN_EXPIRATION" default:"5m"`
 }
 
 func FromOS() (*Config, error) {

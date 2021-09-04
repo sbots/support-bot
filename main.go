@@ -21,7 +21,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	authenticator, err := auth.NewAuthenticator(cfg.SecretKey)
+	authenticator, err := auth.NewAuthenticator(cfg.SecretKey, cfg.TokenIssuer, cfg.TokenExpiration)
 	if err != nil {
 		log.Fatal(err)
 	}

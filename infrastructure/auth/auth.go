@@ -9,29 +9,55 @@ import (
 
 type Authenticator struct {
 	signingKey []byte
+	expiration time.Duration
+	issuer     string
 }
 
-func NewAuthenticator(key string) (*Authenticator, error) {
+func NewAuthenticator(key, issuer string, expiration time.Duration) (*Authenticator, error) {
 	if len(key) == 0 {
 		return nil, fmt.Errorf("signing key is required")
 	}
 	return &Authenticator{
 		signingKey: []byte(key),
+		expiration: expiration,
+		issuer:     issuer,
 	}, nil
 }
 
-func (a *Authenticator) GetJWT(user *models.User) (string, error) {
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims) // nolint
+func (a *Authenticator) GetToken(user *models.User) (string, error) {
+	unsignedToken := newUnsignedToken(user.ID, user.Company, a.issuer, a.expiration)
+	return a.signToken(unsignedToken)
+}
 
-	claims["authorized"] = true
-	claims["user_id"] = user.ID
-	claims["iss"] = "support-bot-platform-test"
-	claims["exp"] = time.Now().Add(time.Minute * 1).Unix()
-
-	tokenString, err := token.SignedString(a.signingKey)
+func (a *Authenticator) ParseToken(tokenString string) (JWTToken, error) {
+	token, err := a.parseToken(tokenString)
 	if err != nil {
-		return "", fmt.Errorf("signing token string: %w", err)
+		return nil, fmt.Errorf("parsing token: %w", err)
 	}
-	return tokenString, nil
+	err = token.Valid()
+	if err != nil {
+		return nil, err
+	}
+	return token, err
+}
+
+func (a *Authenticator) signToken(t *Token) (string, error) {
+	return jwt.NewWithClaims(jwt.SigningMethodHS256, t).SignedString(a.signingKey)
+}
+
+func (a *Authenticator) parseToken(tokenString string) (*Token, error) {
+	jwtToken, err := jwt.ParseWithClaims(tokenString, &Token{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method")
+		}
+		return a.signingKey, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	token, ok := jwtToken.Claims.(*Token)
+	if !ok {
+		return nil, fmt.Errorf("invalid token")
+	}
+	return token, err
 }
