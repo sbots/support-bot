@@ -8,7 +8,7 @@ import (
 
 type Config struct {
 	Domain string `envconfig:"DOMAIN"`
-	Host   string `envconfig:"HOST" default:"localhost"`
+	Host   string `envconfig:"HOST" default:"0.0.0.0"`
 	Port   string `envconfig:"PORT" default:"8080"`
 
 	DB string `envconfig:"DATABASE_URL"`
