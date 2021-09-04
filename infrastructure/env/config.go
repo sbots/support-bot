@@ -11,7 +11,9 @@ type Config struct {
 	Host   string `envconfig:"HOST" default:"0.0.0.0"`
 	Port   string `envconfig:"PORT" default:"8080"`
 
-	DB string `envconfig:"DATABASE_URL"`
+	DB              string `envconfig:"DATABASE_URL"`
+	MigrationNumber int    `envconfig:"DATABASE_MIGRATION_NUMBER"`
+	MigrationURL    string `envconfig:"DATABASE_MIGRATION_URL"`
 
 	SecretKey       string        `envconfig:"AUTH_SECRET_KEY" default:"secret"`
 	TokenIssuer     string        `envconfig:"AUTH_TOKEN_ISSUER" default:"support-bot-platform-test"`

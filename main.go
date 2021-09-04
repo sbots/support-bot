@@ -17,7 +17,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	repo, err := persistence.NewRepository(cfg.DB)
+	repo, err := persistence.NewRepository(cfg.DB, cfg.MigrationURL, cfg.MigrationNumber)
 	if err != nil {
 		log.Fatal(err)
 	}

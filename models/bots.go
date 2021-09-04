@@ -1,6 +1,9 @@
 package models
 
-import uuid "github.com/satori/go.uuid"
+import (
+	uuid "github.com/satori/go.uuid"
+	"time"
+)
 
 const (
 	botTPlatformTelegram = "telegram"
@@ -8,9 +11,11 @@ const (
 )
 
 type Bot struct {
-	ID    string `json:"id"`
-	Token string `json:"token"`
-	Type  string `json:"type"`
+	ID        string    `json:"id" db:"id"`
+	Token     string    `json:"token" db:"token"`
+	Type      string    `json:"type" db:"type"`
+	CreatedAt time.Time `db:"created_at"`
+	UpdatedAt time.Time `db:"updated_at"`
 }
 
 func NewBot(token, platform string) *Bot {
