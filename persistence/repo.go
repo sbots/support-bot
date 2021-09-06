@@ -36,13 +36,13 @@ func (r *Repository) Close() {
 	}
 }
 
-func makeMigrations(db *sql.DB, step int, sourceURL string) error {
+func makeMigrations(db *sql.DB, step int, source string) error {
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
 		return err
 	}
 	m, err := migrate.NewWithDatabaseInstance(
-		sourceURL,
+		source,
 		"postgres", driver)
 	if err != nil {
 		return err
