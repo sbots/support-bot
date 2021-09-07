@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/github"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 	"log"
 )
@@ -14,14 +14,14 @@ type Repository struct {
 	db *sql.DB
 }
 
-func NewRepository(dbURL, migrationsURL string, migrationNumber int) (*Repository, error) {
+func NewRepository(dbURL string) (*Repository, error) {
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		return nil, err
 	}
 
-	err = makeMigrations(db, migrationNumber, migrationsURL)
-	if err != nil {
+	err = makeMigrations(db)
+	if err != nil && err != migrate.ErrNoChange {
 		return nil, fmt.Errorf("making migration: %w", err)
 	}
 
@@ -36,16 +36,16 @@ func (r *Repository) Close() {
 	}
 }
 
-func makeMigrations(db *sql.DB, step int, source string) error {
+func makeMigrations(db *sql.DB) error {
 	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
 		return err
 	}
 	m, err := migrate.NewWithDatabaseInstance(
-		source,
+		"file://migrations",
 		"postgres", driver)
 	if err != nil {
 		return err
 	}
-	return m.Steps(step)
+	return m.Up()
 }

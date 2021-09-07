@@ -58,7 +58,7 @@ func New(addr, domain string, tg, vb botsPlatform, r repo, auth authenticator) *
 	return s
 }
 
-func (s Server) Run(ctx context.Context) error {
+func (s Server) Run(ctx context.Context) {
 	go func() {
 		<-ctx.Done()
 		err := s.http.Shutdown(ctx)
@@ -68,7 +68,9 @@ func (s Server) Run(ctx context.Context) error {
 		log.Println("service gracefully stopped")
 	}()
 	log.Print("starting server")
-	return s.http.ListenAndServe()
+	if err := s.http.ListenAndServe(); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (s *Server) getEndpointForTgBot(id string) string {
