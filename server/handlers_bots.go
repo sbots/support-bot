@@ -30,6 +30,12 @@ func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	token := s.authenticator.GetServiceTokenFromContext(r.Context())
+	if token == nil {
+		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		return
+	}
+
 	var data struct {
 		Token string `json:"token"`
 		Type  string `json:"type"`
@@ -46,6 +52,7 @@ func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
 	bot := models.NewBot(data.Token, data.Type)
 	if err := s.connectBot(bot); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	if err := s.repo.UpsertBot(bot); err != nil {
@@ -55,6 +62,7 @@ func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
 
 	if err := prepareResponse(w, bot); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 	w.WriteHeader(http.StatusCreated)
 }

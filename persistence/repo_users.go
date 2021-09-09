@@ -8,7 +8,7 @@ import (
 
 func (r *Repository) UpsertUser(user *models.User) error {
 	const query = `insert into users (id, name, password, company_id, surname, email, phone, created_at, updated_at) 
-	values (?,?,?,?,?,?,?,?,?) `
+	values (?,?,?,?,?,?,?,?,?)`
 	statement, err := r.db.Prepare(query)
 	if err != nil {
 		return err
