@@ -9,15 +9,16 @@ import (
 )
 
 type User struct {
-	ID        string    `json:"id" db:"id"`
-	Name      string    `json:"name" db:"name"`
-	Surname   string    `json:"surname" db:"surname"`
-	Password  string    `json:"password" db:"password"`
-	Company   string    `json:"company" db:"company"`
-	Email     string    `json:"email" db:"email"`
-	Phone     string    `json:"phone" db:"phone"`
-	CreatedAt time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
+	ID        string     `json:"id" db:"id"`
+	Name      string     `json:"name" db:"name"`
+	Surname   string     `json:"surname" db:"surname"`
+	Password  string     `json:"password" db:"password"`
+	Company   string     `json:"company" db:"company_id"`
+	Email     string     `json:"email" db:"email"`
+	Phone     string     `json:"phone" db:"phone"`
+	CreatedAt time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at" db:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at" db:"deleted_at"`
 }
 
 func NewUser(name, surname, password, companyID, email, phone string) (*User, error) {
@@ -57,10 +58,11 @@ func (u *User) ValidPassword(password string) bool {
 }
 
 type Tenant struct {
-	ID        string    `json:"id" db:"id"`
-	Name      string    `json:"name" db:"name"`
-	CreatedAt time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
+	ID        string     `json:"id" db:"id"`
+	Name      string     `json:"name" db:"name"`
+	CreatedAt time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at" db:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at" db:"deleted_at"`
 }
 
 func NewTenant(name string) *Tenant {

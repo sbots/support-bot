@@ -49,7 +49,7 @@ func (s *Server) newBot(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	bot := models.NewBot(data.Token, data.Type)
+	bot := models.NewBot(data.Token, data.Type, token.GetTenantID())
 	if err := s.connectBot(bot); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -89,7 +89,7 @@ func (s Server) send(w http.ResponseWriter, r *http.Request) {
 	}
 
 	msg := models.NewMessage("", req.Text)
-	bot, err := s.repo.GetBot(mux.Vars(r)["bot"])
+	bot, err := s.repo.GetBotByID(mux.Vars(r)["bot"])
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return

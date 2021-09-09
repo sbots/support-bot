@@ -20,15 +20,15 @@ type Server struct {
 }
 
 type repo interface {
-	GetBot(id string) (*models.Bot, error)
 	UpsertBot(bot *models.Bot) error
+	GetBotByID(id string) (*models.Bot, error)
 
-	UpsertTenant(tenant *models.Tenant) error
 	UpsertUser(user *models.User) error
 	GetUserByEmail(email string) (*models.User, error)
 	GetUserByID(id string) (*models.User, error)
-	GetTenantByID(id string) (*models.Tenant, error)
 
+	UpsertTenant(tenant *models.Tenant) error
+	GetTenantByID(id string) (*models.Tenant, error)
 	TenantHasSuperuser(tenantID string) (bool, error)
 }
 

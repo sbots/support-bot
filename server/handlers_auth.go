@@ -63,7 +63,7 @@ func (s *Server) signUp(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	} else if yes {
-		http.Error(w, "only one superuser currently allowed", http.StatusConflict)
+		http.Error(w, "only one user currently allowed", http.StatusConflict)
 		return
 	}
 
