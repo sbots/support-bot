@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
 	"support-bot/infrastructure/auth"
 	"support-bot/infrastructure/env"
+	"support-bot/logs"
 	"support-bot/persistence"
 	"support-bot/repository/telegram"
 	"support-bot/repository/viber"
@@ -19,6 +20,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	logs.InitLogger(cfg.LogLevel, cfg.LogPrettify)
 
 	repo, err := persistence.NewRepository(cfg.DB)
 	if err != nil {

@@ -3,6 +3,7 @@ package persistence
 import (
 	"database/sql"
 	"fmt"
+	"support-bot/errors"
 	"support-bot/models"
 )
 
@@ -12,7 +13,7 @@ func (r *Repository) UpsertTenant(tenant *models.Tenant) error {
 	if err != nil {
 		return err
 	}
-	_, err = statement.Exec(tenant.ID, tenant.Name, tenant.CreatedAt, tenant.UpdatedAt, tenant)
+	_, err = statement.Exec(tenant.ID, tenant.Name, tenant.CreatedAt, tenant.UpdatedAt, tenant.DeletedAt)
 	if err != nil {
 		return fmt.Errorf("executing upsert tenant statement %w", err)
 	}
@@ -22,6 +23,9 @@ func (r *Repository) UpsertTenant(tenant *models.Tenant) error {
 func (r *Repository) GetTenantByID(id string) (*models.Tenant, error) {
 	const query = `select * from tenants where id = $1 and deleted_at is null limit 1`
 	row := r.db.QueryRow(query, id)
+	if row.Err() == sql.ErrNoRows {
+		return nil, fmt.Errorf(errors.NotFound)
+	}
 	var tenant models.Tenant
 	if err := row.Scan(&tenant.ID, &tenant.Name, &tenant.CreatedAt, &tenant.UpdatedAt); err != nil {
 		return nil, err

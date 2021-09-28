@@ -1,7 +1,9 @@
 package persistence
 
 import (
+	"database/sql"
 	"fmt"
+	"support-bot/errors"
 	"support-bot/models"
 )
 
@@ -22,6 +24,9 @@ func (r *Repository) UpsertUser(user *models.User) error {
 func (r *Repository) GetUserByEmail(email string) (*models.User, error) {
 	const query = `select * from users where email = $1 and deleted_at is null limit 1`
 	row := r.db.QueryRow(query, email)
+	if row.Err() == sql.ErrNoRows {
+		return nil, fmt.Errorf(errors.NotFound)
+	}
 	var user models.User
 	if err := row.Scan(&user.ID, &user.Name, &user.Surname, &user.Password, &user.Company, &user.Email, &user.Phone, &user.CreatedAt, &user.UpdatedAt); err != nil {
 		return nil, err
@@ -32,6 +37,9 @@ func (r *Repository) GetUserByEmail(email string) (*models.User, error) {
 func (r *Repository) GetUserByID(id string) (*models.User, error) {
 	const query = `select * from users where id = $1  and deleted_at is null limit 1`
 	row := r.db.QueryRow(query, id)
+	if row.Err() == sql.ErrNoRows {
+		return nil, fmt.Errorf(errors.NotFound)
+	}
 	var user models.User
 	if err := row.Scan(&user.ID, &user.Name, &user.Surname, &user.Password, &user.Company, &user.Email, &user.Phone, &user.CreatedAt, &user.UpdatedAt); err != nil {
 		return nil, err
