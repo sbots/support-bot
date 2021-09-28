@@ -13,7 +13,7 @@ func (c *controller) newTenant(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var form models.NewCompanyForm
-	if ok := decodeRequest(r.Body, form); !ok {
+	if ok := decodeRequest(r.Body, &form); !ok {
 		http.Error(w, "invalid input", http.StatusBadRequest)
 		return
 	}

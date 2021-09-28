@@ -17,7 +17,7 @@ type controller struct {
 }
 
 type service interface {
-	UserSignUp(form *models.SignUpForm) (*models.User, error)
+	UserSignUp(form *models.SignUpForm) (string, error)
 	UserSignIn(form *models.SignInForm) (string, error)
 	GetUserInformation(ctx context.Context) (*models.User, error)
 
