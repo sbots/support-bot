@@ -7,11 +7,6 @@ import (
 )
 
 func (c controller) signUp(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "POST requests only allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var form models.SignUpForm
 	if ok := decodeRequest(r.Body, &form); !ok {
 		http.Error(w, "invalid input", http.StatusBadRequest)
@@ -32,11 +27,6 @@ func (c controller) signUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *controller) signIn(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "POST requests only allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var form models.SignInForm
 	if ok := decodeRequest(r.Body, &form); !ok {
 		http.Error(w, "invalid input", http.StatusBadRequest)

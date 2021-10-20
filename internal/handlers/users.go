@@ -6,11 +6,6 @@ import (
 )
 
 func (c controller) getUserInformation(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "POST requests only allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	user, err := c.service.GetUserInformation(r.Context())
 	if err != nil {
 		log.WithError(err).Debug("getting user info")

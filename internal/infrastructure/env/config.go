@@ -18,6 +18,8 @@ type Config struct {
 	TokenExpiration time.Duration `envconfig:"AUTH_TOKEN_EXPIRATION" default:"5m"`
 	LogLevel        string        `envconfig:"LOG_LEVEL" default:"DEBUG"`
 	LogPrettify     bool          `envconfig:"LOG_PRETTIFY" default:"true"`
+
+	ProductionMode bool `envconfig:"PRODUCTION_MODE"`
 }
 
 func FromOS() (*Config, error) {

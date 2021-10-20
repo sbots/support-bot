@@ -7,11 +7,6 @@ import (
 )
 
 func (c *controller) newTenant(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "POST requests only allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var form models.NewCompanyForm
 	if ok := decodeRequest(r.Body, &form); !ok {
 		http.Error(w, "invalid input", http.StatusBadRequest)

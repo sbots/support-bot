@@ -12,8 +12,9 @@ import (
 )
 
 type controller struct {
-	service service
-	auth    auth.Authenticator
+	service        service
+	auth           auth.Authenticator
+	productionMode bool
 }
 
 type service interface {
@@ -24,8 +25,8 @@ type service interface {
 	NewTenant(name string) (*models.Tenant, error)
 }
 
-func NewHandler(s service, auth auth.Authenticator) http.Handler {
-	c := &controller{s, auth}
+func NewHandler(s service, auth auth.Authenticator, testMode bool) http.Handler {
+	c := &controller{s, auth, testMode}
 	return c.buildHandler()
 }
 

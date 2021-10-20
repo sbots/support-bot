@@ -2,10 +2,10 @@ package repository
 
 // nolint
 
-//type BotsPlatform struct {
+// type BotsPlatform struct {
 //}
 
-//func (p *BotsPlatform) ConnectBot(bot *models.Bot) error {
+// func (p *BotsPlatform) ConnectBot(bot *models.Bot) error {
 //	if bot.IsTelegramBot() {
 //		path := s.domain + s.getEndpointForTgBot(bot.ID)
 //		return s.tg.ConnectNewBot(bot.Token, path)

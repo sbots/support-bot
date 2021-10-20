@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 const (
@@ -25,20 +26,20 @@ const (
 func (c *controller) buildHandler() *mux.Router {
 	router := mux.NewRouter()
 
-	//router.HandleFunc(telegramEndpoint+"{bot}", c.AddJWTTokenToContext(c.webhook))
-	//router.HandleFunc(telegramSendMessage+"{bot}", c.AddJWTTokenToContext(c.send))
+	//router.HandleFunc(telegramEndpoint+"{bot}", c.addJWTTokenToContext(c.webhook))
+	//router.HandleFunc(telegramSendMessage+"{bot}", c.addJWTTokenToContext(c.send))
 	//
-	//router.HandleFunc(viberEndpoint+"{bot}", c.AddJWTTokenToContext(c.webhook))
-	//router.HandleFunc(viberSendMessage+"{bot}", c.AddJWTTokenToContext(c.send))
+	//router.HandleFunc(viberEndpoint+"{bot}", c.addJWTTokenToContext(c.webhook))
+	//router.HandleFunc(viberSendMessage+"{bot}", c.addJWTTokenToContext(c.send))
 
-	router.HandleFunc(signUpTenantEndpoint, c.newTenant)
-	router.HandleFunc(signUpUserEndpoint, c.signUp)
-	router.HandleFunc(signInEndpoint, c.signIn)
+	router.HandleFunc(signUpTenantEndpoint, c.allowCORS(c.newTenant)).Methods(http.MethodPost, http.MethodOptions)
+	router.HandleFunc(signUpUserEndpoint, c.allowCORS(c.signUp)).Methods(http.MethodPost, http.MethodOptions)
+	router.HandleFunc(signInEndpoint, c.allowCORS(c.signUp)).Methods(http.MethodPost, http.MethodOptions)
 
 	//router.HandleFunc(newBotEndpoint, c.newBot)
 
-	router.HandleFunc(userInfoEndpoint, c.AddJWTTokenToContext(c.getUserInformation))
+	router.HandleFunc(userInfoEndpoint, c.allowCORS(c.addJWTTokenToContext(c.getUserInformation))).
+		Methods(http.MethodPost, http.MethodOptions)
 	//router.HandleFunc(chat, c.Chat)
-
 	return router
 }

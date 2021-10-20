@@ -60,7 +60,7 @@ package handlers
 //	w.WriteHeader(http.StatusCreated)
 //}
 //
-//func (c controller) send(w http.ResponseWriter, r *http.Request) {
+// func (c controller) send(w http.ResponseWriter, r *http.Request) {
 //	if r.Method != http.MethodPost {
 //		http.Error(w, "POST requests only allowed", http.StatusMethodNotAllowed)
 //		return
@@ -96,7 +96,7 @@ package handlers
 //	w.WriteHeader(http.StatusOK)
 //}
 //
-//func (c controller) sendMessage(bot *models.Bot, msg *models.Message, receiver string) error {
+// func (c controller) sendMessage(bot *models.Bot, msg *models.Message, receiver string) error {
 //	if bot.IsTelegramBot() {
 //		return c.tg.SendMessage(msg, bot.Token, receiver)
 //	}
@@ -106,7 +106,7 @@ package handlers
 //	return fmt.Errorf("unsupported platform")
 //}
 
-//func (c *controller) ConnectBot(bot *models.Bot) error {
+// func (c *controller) ConnectBot(bot *models.Bot) error {
 //	if bot.IsTelegramBot() {
 //		path := c.domain + s.getEndpointForTgBot(bot.ID)
 //		return s.tg.ConnectNewBot(bot.Token, path)

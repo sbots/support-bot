@@ -36,7 +36,7 @@ func main() {
 		log.Fatal(err)
 	}
 	svc := service.New(repo, telegram.NewClient(), viber.NewClient(), authenticator)
-	handler := handlers.NewHandler(svc, authenticator)
+	handler := handlers.NewHandler(svc, authenticator, cfg.ProductionMode)
 
 	srv := server.New(cfg.GetAddr(), cfg.Domain, handler)
 	srv.Run(ctx)
