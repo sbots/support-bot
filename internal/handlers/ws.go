@@ -3,20 +3,19 @@ package handlers
 import (
 	"fmt"
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 	"io"
 	"log"
 	"net/http"
+	"support-bot/internal/models"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-
-	// We'll need to check the origin of our connection
-	// this will allow us to make requests from our React
-	// development server to here.
-	// For now, we'll do no checking and just allow any connection
-	CheckOrigin: func(r *http.Request) bool { return true },
+func (c *controller) setupWSUpgrader() {
+	c.upgrader = websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+		CheckOrigin:     func(r *http.Request) bool { return c.validateRequest(r) },
+	}
 }
 
 // define our WebSocket endpoint
@@ -24,7 +23,7 @@ func (c *controller) chat(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r.Host)
 	// upgrade this connection to a WebSocket
 	// connection
-	ws, err := upgrader.Upgrade(w, r, nil)
+	ws, err := c.upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -36,16 +35,14 @@ func (c *controller) chat(w http.ResponseWriter, r *http.Request) {
 
 func reader(conn *websocket.Conn) {
 	for {
-		// read in a message
-		messageType, p, err := conn.ReadMessage()
-		if err != nil {
-			log.Println(err)
-			return
+		var msg models.Message
+		err := conn.ReadJSON(&msg)
+		if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+			logrus.Debug(err)
 		}
-		// print out that message for clarity
-		fmt.Println(string(p))
+		logrus.Debug(msg)
 
-		if err := conn.WriteMessage(messageType, p); err != nil {
+		if err := conn.WriteMessage(websocket.TextMessage, []byte(msg.Text)); err != nil {
 			log.Println(err)
 			return
 		}

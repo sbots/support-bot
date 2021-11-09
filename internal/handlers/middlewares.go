@@ -5,7 +5,10 @@ import (
 	"net/http"
 )
 
-const authHeaderKey = "authorization"
+const (
+	authHeaderKey = "authorization"
+	tokenField    = "token"
+)
 
 func (c *controller) addJWTTokenToContext(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -21,10 +24,20 @@ func (c *controller) addJWTTokenToContext(next http.HandlerFunc) http.HandlerFun
 	}
 }
 
+func (c *controller) validateRequest(r *http.Request) bool {
+	token, err := c.auth.ParseToken(r.Header.Get(tokenField))
+	if err != nil {
+		return false
+	}
+	err = token.Valid()
+	return err == nil
+}
+
 func (c *controller) allowCORS(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if !c.productionMode {
-			r.Header.Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		}
 		next.ServeHTTP(w, r)
 	}

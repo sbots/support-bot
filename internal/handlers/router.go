@@ -34,7 +34,7 @@ func (c *controller) buildHandler() *mux.Router {
 
 	router.HandleFunc(signUpTenantEndpoint, c.allowCORS(c.newTenant)).Methods(http.MethodPost, http.MethodOptions)
 	router.HandleFunc(signUpUserEndpoint, c.allowCORS(c.signUp)).Methods(http.MethodPost, http.MethodOptions)
-	router.HandleFunc(signInEndpoint, c.allowCORS(c.signUp)).Methods(http.MethodPost, http.MethodOptions)
+	router.HandleFunc(signInEndpoint, c.allowCORS(c.signIn)).Methods(http.MethodPost, http.MethodOptions)
 
 	//router.HandleFunc(newBotEndpoint, c.newBot)
 

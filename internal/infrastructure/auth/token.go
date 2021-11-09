@@ -8,6 +8,7 @@ import (
 type JWTToken interface {
 	GetUserID() string
 	GetTenantID() string
+	Valid() error
 }
 
 type Token struct {

@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"net/http"
@@ -15,6 +16,7 @@ type controller struct {
 	service        service
 	auth           auth.Authenticator
 	productionMode bool
+	upgrader       websocket.Upgrader
 }
 
 type service interface {
@@ -26,7 +28,8 @@ type service interface {
 }
 
 func NewHandler(s service, auth auth.Authenticator, testMode bool) http.Handler {
-	c := &controller{s, auth, testMode}
+	c := &controller{service: s, auth: auth, productionMode: testMode}
+	c.setupWSUpgrader()
 	return c.buildHandler()
 }
 

@@ -17,6 +17,11 @@ type repo interface {
 	GetTenantByID(id string) (*models.Tenant, error)
 	GetTenantByName(name string) (*models.Tenant, error)
 	TenantHasSuperuser(tenantID string) (bool, error)
+
+	UpsertCustomer(customer *models.Customer) error
+	GetCustomerByID(id string) (*models.Customer, error)
+
+	SaveMessage(msg *models.Message) error
 }
 
 type botsPlatform interface {

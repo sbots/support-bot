@@ -40,7 +40,9 @@ linters-settings:
     simple: true
     range-loops: true # Report preallocation suggestions on range loops
     for-loops: false # Report preallocation suggestions on for loops
-
+  gocritic:
+    disabled-checks:
+      - commentFormatting
 linters:
   disable-all: true
   enable:
