@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	botPlatformTelegram Platform = "telegram"
-	botPlatformViber    Platform = "viber"
+	botPlatformTelegram Platform = "TELEGRAM"
+	botPlatformViber    Platform = "VIBER"
 )
 
 type Platform string
@@ -24,8 +24,8 @@ type Bot struct {
 	DeletedAt *time.Time `db:"deleted_at"`
 }
 
-func NewBot(token, platform, tenant string) *Bot {
-	return &Bot{ID: uuid.NewV4().String(), Token: token, Type: Platform(platform), Company: tenant}
+func NewBot(token, tenant string, platform Platform) *Bot {
+	return &Bot{ID: uuid.NewV4().String(), Token: token, Type: platform, Company: tenant}
 }
 
 func (b Bot) IsTelegramBot() bool {
